@@ -1,0 +1,4 @@
+rootProject.name = 'dx-signer'
+
+include 'signer'
+include 'patch'

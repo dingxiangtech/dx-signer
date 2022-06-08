@@ -1,0 +1,38 @@
+plugins {
+    id 'java'
+    id 'idea'
+}
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile fileTree(dir: 'lib', include: ['*.jar'])
+    compile group: 'org.ow2.asm', name: 'asm', version: '9.3'
+}
+
+task fatJar(type: Jar, dependsOn: jar) {
+    baseName = 'dx-patch'
+
+    def deps = configurations.runtime
+
+    def depClasses = { deps.collect { it.isDirectory() ? it : zipTree(it) } }
+
+    from(depClasses) {
+        exclude 'META-INF/*.MF'
+        exclude 'META-INF/*.SF'
+        exclude 'META-INF/*.RSA'
+        exclude 'META-INF/*.DSA'
+        exclude '**/*.html'
+    }
+
+    manifest {
+        attributes 'Implementation-Title': 'Gradle Jar File Example',
+                'Main-Class': 'dx.Patch'
+    }
+
+    from(sourceSets.main.output)
+}
