@@ -19,6 +19,7 @@ package dx.channel;
 
 import com.meituan.android.walle.ChannelWriter;
 import com.meituan.android.walle.SignatureNotFoundException;
+import dx.zip.AxmlFastZipOut;
 import dx.zip.FastZipEntry;
 import dx.zip.FastZipIn;
 import dx.zip.Source;
@@ -114,7 +115,7 @@ public class ChannelBuilder implements AutoCloseable {
         Path tmp = Files.createTempFile(parent, "tmp", ".apk");
         Files.deleteIfExists(out);
         try {
-            try (AxmlExFastZipOut zout = new AxmlExFastZipOut(tmp.toFile());) {
+            try (AxmlFastZipOut zout = new AxmlFastZipOut(tmp.toFile());) {
                 zout.initByAndroidManifestContent(axml);
                 zout.copyPart(in, entries);
                 updateUM(axml, channel);
