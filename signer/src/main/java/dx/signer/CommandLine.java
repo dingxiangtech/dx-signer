@@ -85,7 +85,7 @@ public class CommandLine {
         }
         Path input = Paths.get(p.getProperty("in"));
         Path ks = Paths.get(p.getProperty("ks"));
-        String ksPass = p.getProperty("ks-pass");
+        String ksPass = p.getProperty("ks-pass", "");
 
         String ksKeyAlias = p.getProperty("ks-key-alias", "");
         String keyPass = p.getProperty("key-pass", "");

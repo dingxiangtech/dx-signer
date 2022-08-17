@@ -88,7 +88,15 @@ public class ApkSigns {
         return zipEntryList;
     }
 
+    public static KeyStore.PrivateKeyEntry loadKey(byte[] ksContent, String ksPass, String keyAlias, String keyPass) throws IOException {
+        return loadKey0(ksContent, ksPass, keyAlias, keyPass);
+    }
+
     public static KeyStore.PrivateKeyEntry loadKey(Path ks, String ksPass, String keyAlias, String keyPass) throws IOException {
+        return loadKey0(ks, ksPass, keyAlias, keyPass);
+    }
+
+    private static KeyStore.PrivateKeyEntry loadKey0(Object ks, String ksPass, String keyAlias, String keyPass) throws IOException {
         KeyStore.PrivateKeyEntry privateKeyEntry = null;
 
         Set<String> passwordList = new TreeSet<>();
@@ -100,7 +108,7 @@ public class ApkSigns {
         }
         passwordList.add(ksPass);
         passwordList.add("android");
-        KeyStore keyStore = loadKeyStore(ks, passwordList);
+        KeyStore keyStore = loadKeyStore0(ks, passwordList);
 
         List<String> aliasesList = new ArrayList<>();
         try {
@@ -162,6 +170,14 @@ public class ApkSigns {
             sb.append(String.format("%02x", b & 0xFF));
         }
         return sb.toString();
+    }
+
+    private static KeyStore loadKeyStore0(Object ks, Set<String> passwordList) throws IOException {
+        if (ks instanceof byte[]) {
+            return loadKeyStore((byte[]) ks, passwordList);
+        } else {
+            return loadKeyStore(Files.readAllBytes((Path) ks), passwordList);
+        }
     }
 
     public static KeyStore loadKeyStore(Path ks, Set<String> passwordList) throws IOException {
