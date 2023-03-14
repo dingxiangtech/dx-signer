@@ -19,6 +19,7 @@ package dx.signer;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import dx.channel.ApkSigns;
 import org.slf4j.impl.SimpleLogger;
 
 import javax.swing.*;
@@ -33,8 +34,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.KeyStore;
-import java.util.Enumeration;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -279,15 +279,13 @@ public class UX {
             @Override
             public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
                 KeyStore keyStore = null;
-                for (String type : new String[]{KeyStore.getDefaultType(), "JKS", "P12"}) {
-                    try {
-                        keyStore = KeyStore.getInstance(type);
-                        FileInputStream fis = new FileInputStream(ksPathTF.getText());
-                        keyStore.load(fis, ksPassPF.getPassword());
-                        fis.close();
-                    } catch (Exception ignore) {
-
-                    }
+                try {
+                    byte[] d = Files.readAllBytes(Paths.get(ksPathTF.getText()));
+                    Set<String> keyList = new HashSet<>();
+                    keyList.add(new String(ksPassPF.getPassword()));
+                    keyStore = ApkSigns.loadKeyStore(d, keyList);
+                } catch (Exception ignore) {
+                    keyStore = null;
                 }
 
                 if (keyStore != null) {

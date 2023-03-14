@@ -106,7 +106,6 @@ public class ApkSigns {
         if (keyPass != null) {
             passwordList.add(keyPass);
         }
-        passwordList.add(ksPass);
         passwordList.add("android");
         KeyStore keyStore = loadKeyStore0(ks, passwordList);
 
@@ -131,12 +130,18 @@ public class ApkSigns {
 
         for (String alias : aliasesList) {
             for (String pass : passwordList) {
+                if (pass == null){
+                    continue;
+                }
                 try {
                     KeyStore.ProtectionParameter param = new KeyStore.PasswordProtection(pass.toCharArray());
                     privateKeyEntry = (KeyStore.PrivateKeyEntry) keyStore.getEntry(alias, param);
                     break;
                 } catch (Exception ignore) {
                 }
+            }
+            if (privateKeyEntry != null) {
+                break;
             }
         }
         if (privateKeyEntry == null) {
@@ -183,11 +188,20 @@ public class ApkSigns {
     public static KeyStore loadKeyStore(Path ks, Set<String> passwordList) throws IOException {
         return loadKeyStore(Files.readAllBytes(ks), passwordList);
     }
-
-    public static KeyStore loadKeyStore(byte[] ksContent, Set<String> passwordList) throws IOException {
+    public static KeyStore loadKeyStore(byte[] ksContent, Set<String> passwordList0) throws IOException {
         List<String> storeTypes = Arrays.asList("PKCS12", "JKS", KeyStore.getDefaultType());
+
+        Set<String> passwordList = new HashSet<>();
+        if (passwordList0 != null) {
+            passwordList.addAll(passwordList0);
+        }
+        passwordList.add("android");
+
         for (String type : storeTypes) {
             for (String password : passwordList) {
+                if (password == null) {
+                    continue;
+                }
                 try {
                     KeyStore keyStore = KeyStore.getInstance(type);
                     keyStore.load(new ByteArrayInputStream(ksContent), password.toCharArray());
