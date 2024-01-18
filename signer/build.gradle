@@ -14,7 +14,7 @@ dependencies {
     compile fileTree(dir: 'lib', include: ['*.jar'])
     compile 'org.slf4j:slf4j-api:1.7.30'
     compile 'com.meituan.android.walle:payload_writer:1.1.7'
-    compile 'org.json:json:20220320'
+    compile 'org.json:json:20231013'
     compile 'org.slf4j:slf4j-simple:1.7.30'
     compile 'com.intellij:forms_rt:7.0.3'
 }
@@ -32,6 +32,7 @@ task fatJar(type: Jar, dependsOn: jar) {
         exclude 'META-INF/*.RSA'
         exclude 'META-INF/*.DSA'
         exclude '**/*.html'
+        exclude 'META-INF/maven/**'
     }
 
     manifest {
