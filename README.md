@@ -22,7 +22,7 @@ java -jar dx-signer.jar
 ## 命令行界面
 
 ```bash
-java -jar dx-signer.apk sign [--option value]+
+java -jar dx-signer.jar sign [--option value]+
 ```
 
     您需要Java 8+的运行环境，推荐使用OpenJDK的实现。
